@@ -1,0 +1,131 @@
+# Configuration for Agent Vocal IA
+# Tuteur vocal éducatif 100% local pour Google Colab
+
+# =============================================================================
+# ASR (Automatic Speech Recognition) Settings
+# =============================================================================
+asr:
+  model_name: "small"  # Options: tiny, base, small, medium, large-v2, large-v3
+  language: "fr"  # French by default
+  device: "cuda"  # Use GPU when available, fallback to CPU
+  compute_type: "float16"  # Options: int8, float16, float32
+  vad_enabled: true
+  vad_threshold: 0.5
+  min_silence_duration_ms: 300
+  speech_pad_ms: 30
+  sample_rate: 16000
+
+# =============================================================================
+# RAG (Retrieval Augmented Generation) Settings
+# =============================================================================
+rag:
+  embedding_model: "sentence-transformers/all-MiniLM-L6-v2"  # Fast and efficient
+  # Alternative: "dangvantuan/sentence-camembert-base" for better French
+  chunk_size: 512
+  chunk_overlap: 50
+  top_k: 3  # Number of relevant documents to retrieve
+  similarity_threshold: 0.3
+  index_dir: "data/indices"
+  subjects:
+    - maths
+    - physique
+    - anglais
+
+# =============================================================================
+# LLM (Large Language Model) Settings
+# =============================================================================
+llm:
+  model_path: "models/llm/phi-3-mini-4k-instruct.Q4_K_M.gguf"
+  # Alternative models:
+  # - "models/llm/qwen2.5-3b-instruct.Q4_K_M.gguf"
+  # - "models/llm/mistral-7b-instruct-v0.2.Q4_K_M.gguf"
+  
+  n_ctx: 4096  # Context window size
+  n_threads: 4
+  n_gpu_layers: 35  # Offload layers to GPU (adjust based on VRAM)
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 40
+  max_tokens: 512
+  repeat_penalty: 1.1
+  stream: true
+  
+  # Tutor-specific settings
+  progressive_hints: true
+  hint_levels: 3
+  max_solution_reveal: 0.6  # Never give more than 60% of the solution
+
+# =============================================================================
+# TTS (Text-to-Speech) Settings
+# =============================================================================
+tts:
+  model_path: "models/voices/fr_FR-siwis-medium.onnx"
+  # Alternative French voices:
+  # - "models/voices/fr_FR-upmc-medium.onnx"
+  # - "models/voices/fr_FR-tom-medium.onnx"
+  
+  config_path: "models/voices/fr_FR-siwis-medium.onnx.json"
+  sample_rate: 22050
+  speed: 1.0
+  speaker_id: 0  # For multi-speaker models
+
+# =============================================================================
+# Orchestrator Settings
+# =============================================================================
+orchestrator:
+  auto_detect_subject: true
+  subject_keywords:
+    maths:
+      - "mathématiques"
+      - "calcul"
+      - "équation"
+      - "géométrie"
+      - "algèbre"
+      - "fonction"
+      - "dérivée"
+      - "intégrale"
+    physique:
+      - "physique"
+      - "force"
+      - "énergie"
+      - "vitesse"
+      - "masse"
+      - "Newton"
+      - "électrique"
+      - "mécanique"
+    anglais:
+      - "anglais"
+      - "english"
+      - "grammaire"
+      - "vocabulaire"
+      - "traduction"
+      - "conjugaison"
+  
+  default_subject: "maths"
+  enable_logging: true
+  log_level: "INFO"  # Options: DEBUG, INFO, WARNING, ERROR
+  audio_output_dir: "outputs/audio"
+  conversation_history_length: 5
+
+# =============================================================================
+# UI (User Interface) Settings
+# =============================================================================
+ui:
+  title: "🎓 Agent Vocal IA - Tuteur Éducatif"
+  description: "Assistant vocal local pour l'apprentissage (100% offline)"
+  theme: "soft"  # Gradio theme
+  share: false  # Set to true for public Colab link
+  server_port: 7860
+  enable_queue: true
+  max_concurrent_requests: 3
+
+# =============================================================================
+# General Settings
+# =============================================================================
+general:
+  models_download_dir: "models"
+  data_dir: "data"
+  cache_dir: ".cache"
+  temp_dir: "temp"
+  seed: 42  # For reproducibility
+  verbose: true

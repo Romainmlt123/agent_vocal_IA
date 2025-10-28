@@ -1,0 +1,35 @@
+# Core dependencies for Agent Vocal IA
+# Python 3.10+ required
+
+# ASR (Automatic Speech Recognition)
+faster-whisper==1.0.3
+torch>=2.0.0
+torchaudio>=2.0.0
+silero-vad==5.1
+
+# RAG (Retrieval Augmented Generation)
+sentence-transformers==2.7.0
+faiss-cpu==1.8.0  # Use faiss-gpu on Colab with GPU
+pypdf==4.2.0
+langchain==0.2.11
+langchain-community==0.2.10
+
+# LLM (Local Language Model)
+llama-cpp-python==0.2.85
+
+# TTS (Text-to-Speech)
+piper-tts==1.2.0
+
+# UI and utilities
+gradio==4.36.1
+pyyaml==6.0.1
+numpy>=1.24.0
+scipy>=1.10.0
+soundfile>=0.12.1
+sounddevice>=0.4.6
+
+# Development and testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+black>=23.7.0
+flake8>=6.1.0
