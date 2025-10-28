@@ -1,0 +1,41 @@
+# Les Lois de Newton
+
+Les trois lois de Newton sont les principes fondamentaux de la mécanique classique.
+
+## Première Loi (Loi d'Inertie)
+
+Un corps au repos reste au repos et un corps en mouvement reste en mouvement rectiligne uniforme, sauf si une force extérieure agit sur lui.
+
+En d'autres termes: sans force, pas de changement de vitesse.
+
+## Deuxième Loi (Principe Fondamental de la Dynamique)
+
+La force appliquée à un objet est égale à sa masse multipliée par son accélération:
+
+**F = m × a**
+
+Où:
+- F est la force (en Newtons)
+- m est la masse (en kilogrammes)
+- a est l'accélération (en m/s²)
+
+## Troisième Loi (Action-Réaction)
+
+Pour chaque action, il existe une réaction égale et opposée.
+
+Si un corps A exerce une force sur un corps B, alors le corps B exerce une force de même intensité mais de direction opposée sur le corps A.
+
+## Exemple Pratique
+
+Quand vous poussez un mur:
+- Vous exercez une force sur le mur (action)
+- Le mur exerce une force sur vous (réaction)
+- Les deux forces sont égales en intensité mais opposées en direction
+
+## Applications
+
+Les lois de Newton permettent de:
+- Calculer les trajectoires des objets
+- Comprendre le mouvement des planètes
+- Concevoir des véhicules et des structures
+- Analyser les forces dans les systèmes mécaniques
