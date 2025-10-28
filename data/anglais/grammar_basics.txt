@@ -1,0 +1,71 @@
+# English Grammar Basics
+
+## Present Simple Tense
+
+The present simple is used to describe habits, facts, and general truths.
+
+### Structure
+
+**Positive:**
+- I/You/We/They + verb
+- He/She/It + verb + s/es
+
+**Negative:**
+- I/You/We/They + do not (don't) + verb
+- He/She/It + does not (doesn't) + verb
+
+**Questions:**
+- Do + I/you/we/they + verb?
+- Does + he/she/it + verb?
+
+### Examples
+
+Positive:
+- I play tennis every week.
+- She speaks three languages.
+
+Negative:
+- I don't like coffee.
+- He doesn't work on Sundays.
+
+Questions:
+- Do you speak English?
+- Does she live in Paris?
+
+## Present Continuous Tense
+
+The present continuous is used for actions happening now or around now.
+
+### Structure
+
+Subject + am/is/are + verb-ing
+
+### Examples
+
+- I am studying English.
+- She is watching TV.
+- They are playing football.
+
+## Common Mistakes
+
+1. **Wrong:** He don't like pizza.
+   **Correct:** He doesn't like pizza.
+
+2. **Wrong:** She speak English well.
+   **Correct:** She speaks English well.
+
+3. **Wrong:** Do he work here?
+   **Correct:** Does he work here?
+
+## Time Expressions
+
+**Present Simple:** always, usually, often, sometimes, rarely, never, every day/week/month
+
+**Present Continuous:** now, at the moment, right now, currently
+
+## Tips for Learning
+
+- Practice regular verbs first
+- Learn irregular verbs gradually
+- Use time expressions to help choose the correct tense
+- Listen to native speakers for natural usage

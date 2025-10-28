@@ -47,9 +47,12 @@ models/llm/*.gguf
 models/voices/*.onnx
 
 # Data files (can be large)
+# Note: Small example files are allowed for demonstration
 data/*/*.pdf
-data/*/*.txt
+# data/*/*.txt  # Allow .txt files for course materials
 data/*/*.json
+data/*/large_*
+data/*/embeddings/
 
 # OS
 .DS_Store

@@ -1,0 +1,31 @@
+# Théorème de Pythagore
+
+Le théorème de Pythagore est l'un des théorèmes fondamentaux de la géométrie euclidienne.
+
+## Énoncé
+
+Dans un triangle rectangle, le carré de la longueur de l'hypoténuse est égal à la somme des carrés des longueurs des deux autres côtés.
+
+Si un triangle a un angle droit, et que les côtés adjacents à cet angle mesurent a et b, et que l'hypoténuse mesure c, alors:
+
+**a² + b² = c²**
+
+## Exemple
+
+Si un triangle rectangle a des côtés de longueur 3 et 4, alors l'hypoténuse mesure:
+- c² = 3² + 4²
+- c² = 9 + 16
+- c² = 25
+- c = 5
+
+## Applications
+
+Le théorème de Pythagore est utilisé pour:
+- Calculer des distances
+- Vérifier si un triangle est rectangle
+- Résoudre des problèmes de géométrie dans l'espace
+- Calculer des diagonales dans les figures géométriques
+
+## Réciproque
+
+La réciproque du théorème de Pythagore dit que si dans un triangle ABC, on a AB² + BC² = AC², alors le triangle est rectangle en B.
