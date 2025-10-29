@@ -404,6 +404,31 @@ conversation:
      model_path: "models/llm/votre-modele.gguf"
    ```
 
+### Erreurs lors de l'installation (piper-tts, faiss-gpu)
+
+**Symptômes** : Erreurs `piper-phonemize not found` ou `faiss-gpu not available`
+
+**Cause** : Python 3.12+ n'est pas compatible avec certains packages
+
+**Solutions** :
+1. **Utilisez le notebook `setup_colab.ipynb`** : il gère automatiquement ces problèmes
+2. **Pour Piper-TTS** : Le notebook installe automatiquement Coqui TTS comme alternative
+3. **Pour FAISS** : Le notebook fait automatiquement un fallback vers `faiss-cpu`
+
+**Alternative manuelle** :
+```bash
+# Si piper-tts échoue, utilisez Coqui TTS
+pip install TTS>=0.22.0
+
+# Si faiss-gpu échoue, utilisez CPU
+pip install faiss-cpu==1.8.0
+
+# Pour llama-cpp-python, utilisez les wheels précompilés
+pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu121
+```
+
+Puis modifiez `config.yaml` si nécessaire pour utiliser Coqui TTS.
+
 ### Le lien Gradio a expiré
 
 Les liens publics expirent après ~72h. **Relancez simplement** :

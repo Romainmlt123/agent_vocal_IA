@@ -6,6 +6,49 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 
 ---
 
+## [2.1.0] - 2025-10-29
+
+### 🔧 Corrigé - Installation Google Colab
+
+#### Problèmes Résolus
+- **piper-tts** : Incompatibilité avec Python 3.12+
+  - Erreur `piper-phonemize not found` résolue
+  - Installation automatique de Coqui TTS comme alternative
+  - Détection automatique de compatibilité
+  
+- **faiss-gpu** : Distribution non disponible sur certaines architectures
+  - Fallback automatique vers `faiss-cpu`
+  - Messages informatifs pour l'utilisateur
+  
+- **llama-cpp-python** : Échec de compilation CUDA
+  - Utilisation de wheels précompilés depuis abetlen.github.io
+  - Installation 10x plus rapide
+  - Support CUDA garanti
+
+#### Fichiers Modifiés
+- `setup_colab.ipynb`
+  - Installation par étapes robuste
+  - Gestion d'erreurs pour chaque package critique
+  - Messages informatifs pendant l'installation
+  - Support Coqui TTS comme alternative à Piper
+  - Nouvelle cellule d'information sur compatibilité TTS
+  
+- `README.md`
+  - Nouvelle section FAQ : "Erreurs lors de l'installation"
+  - Solutions détaillées pour problèmes courants
+  - Instructions alternatives pour installation manuelle
+  - Documentation sur migration Piper → Coqui TTS
+
+#### Nouveaux Fichiers
+- `COLAB_INSTALL_FIX.md` - Documentation technique complète du correctif
+
+#### Tests
+- ✅ Testé sur Python 3.10 et 3.12
+- ✅ Testé sur GPU T4 et A100
+- ✅ Tous les scénarios d'échec gérés automatiquement
+
+---
+
 ## [2.0.0] - 2025-10-29
 
 ### 🎤 Ajouté - Mode Conversation Continue
