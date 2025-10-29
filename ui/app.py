@@ -461,13 +461,14 @@ class VocalTutorUI:
                             time.sleep(2)
                             yield self.poll_conversation_updates(conversation_state.value)
                     
-                    # Auto-refresh conversation display
-                    conversation_state.change(
+                    # Auto-refresh conversation display (polling every 2 seconds)
+                    # Note: Utilisez le bouton "Rafraîchir" pour mettre à jour manuellement
+                    refresh_conv_btn = gr.Button("🔄 Rafraîchir", size="sm")
+                    refresh_conv_btn.click(
                         fn=self.poll_conversation_updates,
                         inputs=[conversation_state],
                         outputs=[conversation_transcript, conversation_response,
-                                conversation_history_display, status_conversation],
-                        every=2  # Poll every 2 seconds
+                                conversation_history_display, status_conversation]
                     )
                     
                     # Connect history buttons
