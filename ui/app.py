@@ -15,6 +15,7 @@ import gradio as gr
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.orchestrator import VocalTutorOrchestrator
+from src.conversation_manager import ConversationManager
 from src.utils import get_config, setup_logging
 
 
@@ -38,6 +39,13 @@ class VocalTutorUI:
         # Initialize orchestrator (lazy)
         self.orchestrator: VocalTutorOrchestrator = None
         
+        # Initialize conversation manager (lazy)
+        self.conversation_manager: ConversationManager = None
+        
+        # Conversation state
+        self.conversation_history = []
+        self.conversation_active = False
+        
         # UI configuration
         self.title = self.config.get('ui.title', '🎓 Agent Vocal IA - Tuteur Éducatif')
         self.description = self.config.get('ui.description', 
@@ -52,6 +60,14 @@ class VocalTutorUI:
             self.logger.info("Loading orchestrator...")
             self.orchestrator = VocalTutorOrchestrator(self.config)
         return self.orchestrator
+    
+    def _get_conversation_manager(self) -> ConversationManager:
+        """Get or create conversation manager instance."""
+        if self.conversation_manager is None:
+            self.logger.info("Loading conversation manager...")
+            orchestrator = self._get_orchestrator()
+            self.conversation_manager = ConversationManager(self.config, orchestrator)
+        return self.conversation_manager
     
     def process_audio_input(
         self,
@@ -200,6 +216,136 @@ class VocalTutorUI:
         
         return "\n".join(lines)
     
+    def toggle_conversation(
+        self,
+        current_state: bool,
+        subject: str,
+        auto_detect: bool
+    ):
+        """
+        Toggle conversation mode on/off.
+        
+        Args:
+            current_state: Current conversation state
+            subject: Selected subject
+            auto_detect: Whether to auto-detect subject
+            
+        Returns:
+            Tuple of (new_state, button_text, button_variant, status_message, transcript, response)
+        """
+        try:
+            if not current_state:
+                # Start conversation
+                self.logger.info("Starting continuous conversation...")
+                
+                # Get conversation manager
+                conv_mgr = self._get_conversation_manager()
+                
+                # Set subject if not auto-detecting
+                if not auto_detect and subject:
+                    self._get_orchestrator().set_subject(subject)
+                
+                # Clear previous history for this session
+                self.conversation_history = []
+                
+                # Start conversation
+                conv_mgr.start_conversation()
+                
+                return (
+                    True,  # new state
+                    "🛑 Arrêter la conversation",
+                    "stop",
+                    "🎤 Conversation active! Parlez naturellement, l'IA détectera automatiquement quand vous avez fini de parler.",
+                    "",  # transcript
+                    ""   # response
+                )
+            
+            else:
+                # Stop conversation
+                self.logger.info("Stopping continuous conversation...")
+                
+                conv_mgr = self._get_conversation_manager()
+                conv_mgr.stop_conversation()
+                
+                return (
+                    False,  # new state
+                    "🎤 Démarrer la conversation",
+                    "primary",
+                    "✅ Conversation terminée. Cliquez pour recommencer.",
+                    "",  # transcript
+                    ""   # response
+                )
+        
+        except Exception as e:
+            self.logger.error(f"Error toggling conversation: {e}", exc_info=True)
+            return (
+                False,
+                "🎤 Démarrer la conversation",
+                "primary",
+                f"❌ Erreur: {str(e)}",
+                "",
+                ""
+            )
+    
+    def poll_conversation_updates(self, is_active: bool):
+        """
+        Poll for conversation updates (for real-time display).
+        
+        Args:
+            is_active: Whether conversation is active
+            
+        Returns:
+            Tuple of (transcript, response, history, status)
+        """
+        if not is_active:
+            return ("", "", self.get_conversation_history(), "")
+        
+        try:
+            conv_mgr = self._get_conversation_manager()
+            results = conv_mgr.get_latest_results()
+            
+            transcript = results.get('transcript', '')
+            response = results.get('response', '')
+            status = results.get('status', '')
+            
+            # Update history if we have new results
+            if transcript and response:
+                # Check if this is a new entry
+                if not self.conversation_history or \
+                   self.conversation_history[-1].get('user') != transcript:
+                    self.conversation_history.append({
+                        'user': transcript,
+                        'ai': response
+                    })
+            
+            history = self.get_conversation_history()
+            
+            return (transcript, response, history, status)
+            
+        except Exception as e:
+            self.logger.error(f"Error polling updates: {e}")
+            return ("", "", self.get_conversation_history(), f"❌ Erreur: {str(e)}")
+    
+    def get_conversation_history(self):
+        """Get formatted conversation history."""
+        if not self.conversation_history:
+            return "Aucun historique de conversation"
+        
+        lines = ["📜 Historique de la conversation:\n"]
+        for i, entry in enumerate(self.conversation_history, 1):
+            user_text = entry.get('user', '')
+            ai_text = entry.get('ai', '')
+            lines.append(f"\n**Tour {i}:**")
+            lines.append(f"👤 Vous: {user_text}")
+            lines.append(f"🤖 IA: {ai_text}")
+        
+        return "\n".join(lines)
+    
+    def clear_conversation_history(self):
+        """Clear conversation history."""
+        self.conversation_history = []
+        return "✅ Historique effacé"
+    
     def get_available_subjects(self):
         """Get list of available subjects."""
         try:
@@ -240,9 +386,105 @@ class VocalTutorUI:
             
             # Main tabs
             with gr.Tabs():
-                # Tab 1: Audio Input
-                with gr.Tab("🎤 Mode Vocal"):
-                    gr.Markdown("### Posez votre question vocalement")
+                # Tab 1: Continuous Conversation (NEW!)
+                with gr.Tab("💬 Conversation Continue"):
+                    gr.Markdown("""
+                    ### 🎤 Mode Conversation Naturelle
+                    
+                    **Comment ça marche ?**
+                    1. Cliquez sur "Démarrer la conversation" 🎤
+                    2. Parlez naturellement (pas besoin de cliquer à nouveau)
+                    3. L'IA détecte automatiquement quand vous avez fini de parler
+                    4. L'IA répond vocalement
+                    5. Vous pouvez immédiatement continuer à parler
+                    6. Cliquez sur "Arrêter" quand vous avez terminé 🛑
+                    
+                    **⚡ Détection automatique de fin de parole par VAD (Voice Activity Detection)**
+                    """)
+                    
+                    # Conversation state
+                    conversation_state = gr.State(value=False)
+                    
+                    with gr.Row():
+                        toggle_conversation_btn = gr.Button(
+                            "🎤 Démarrer la conversation",
+                            variant="primary",
+                            size="lg"
+                        )
+                    
+                    status_conversation = gr.Textbox(
+                        label="📊 Statut",
+                        value="Prêt à démarrer",
+                        interactive=False,
+                        lines=2
+                    )
+                    
+                    with gr.Row():
+                        with gr.Column():
+                            conversation_transcript = gr.Textbox(
+                                label="📝 Dernière transcription",
+                                lines=3,
+                                interactive=False
+                            )
+                        
+                        with gr.Column():
+                            conversation_response = gr.Textbox(
+                                label="💡 Dernière réponse IA",
+                                lines=6,
+                                interactive=False
+                            )
+                    
+                    conversation_history_display = gr.Textbox(
+                        label="📜 Historique de la conversation",
+                        lines=10,
+                        interactive=False
+                    )
+                    
+                    with gr.Row():
+                        refresh_history_btn = gr.Button("🔄 Actualiser l'historique")
+                        clear_history_btn = gr.Button("🗑️ Effacer l'historique")
+                    
+                    # Connect conversation toggle
+                    toggle_conversation_btn.click(
+                        fn=self.toggle_conversation,
+                        inputs=[conversation_state, subject_selector, auto_detect_checkbox],
+                        outputs=[conversation_state, toggle_conversation_btn, 
+                                toggle_conversation_btn, status_conversation,
+                                conversation_transcript, conversation_response]
+                    )
+                    
+                    # Polling for updates (every 2 seconds when active)
+                    # Note: Gradio doesn't support true push updates, so we poll
+                    def update_loop():
+                        import time
+                        while True:
+                            time.sleep(2)
+                            yield self.poll_conversation_updates(conversation_state.value)
+                    
+                    # Auto-refresh conversation display
+                    conversation_state.change(
+                        fn=self.poll_conversation_updates,
+                        inputs=[conversation_state],
+                        outputs=[conversation_transcript, conversation_response,
+                                conversation_history_display, status_conversation],
+                        every=2  # Poll every 2 seconds
+                    )
+                    
+                    # Connect history buttons
+                    refresh_history_btn.click(
+                        fn=self.get_conversation_history,
+                        outputs=conversation_history_display
+                    )
+                    
+                    clear_history_btn.click(
+                        fn=self.clear_conversation_history,
+                        outputs=status_conversation
+                    )
+                
+                # Tab 2: Audio Input (Manuel)
+                with gr.Tab("🎤 Mode Vocal Manuel"):
+                    gr.Markdown("### Posez votre question vocalement (enregistrement manuel)")
+                    gr.Markdown("*Cliquez pour démarrer l'enregistrement, puis cliquez à nouveau pour l'arrêter*")
                     
                     with gr.Row():
                         audio_input = gr.Audio(
@@ -293,7 +535,7 @@ class VocalTutorUI:
                                 sources_output_audio, audio_output, status_audio]
                     )
                 
-                # Tab 2: Text Input
+                # Tab 3: Text Input
                 with gr.Tab("💬 Mode Texte"):
                     gr.Markdown("### Posez votre question par écrit")
                     

@@ -108,6 +108,17 @@ orchestrator:
   conversation_history_length: 5
 
 # =============================================================================
+# Conversation Manager Settings
+# =============================================================================
+conversation:
+  vad_threshold: 0.5  # Speech detection threshold (0-1)
+  min_speech_duration_ms: 500  # Minimum speech duration to process
+  min_silence_duration_ms: 800  # Silence duration to consider speech ended
+  speech_pad_ms: 300  # Padding around detected speech
+  max_conversation_duration: 3600  # Max conversation duration in seconds (1 hour)
+  enable_auto_response: true  # Automatically play TTS response
+
+# =============================================================================
 # UI (User Interface) Settings
 # =============================================================================
 ui:
