@@ -404,30 +404,65 @@ conversation:
      model_path: "models/llm/votre-modele.gguf"
    ```
 
-### Erreurs lors de l'installation (piper-tts, faiss-gpu)
+### Erreurs lors de l'installation sur Colab
 
-**Symptômes** : Erreurs `piper-phonemize not found` ou `faiss-gpu not available`
+#### ❌ Problème 1 : `ModuleNotFoundError: No module named 'numpy.rec'`
 
-**Cause** : Python 3.12+ n'est pas compatible avec certains packages
+**Symptôme** : Erreur lors de l'import de Gradio ou d'autres packages après installation
 
-**Solutions** :
-1. **Utilisez le notebook `setup_colab.ipynb`** : il gère automatiquement ces problèmes
-2. **Pour Piper-TTS** : Le notebook installe automatiquement Coqui TTS comme alternative
-3. **Pour FAISS** : Le notebook fait automatiquement un fallback vers `faiss-cpu`
+**Cause** : NumPy corrompu en cache après réinstallation pendant que le kernel tourne
 
-**Alternative manuelle** :
-```bash
-# Si piper-tts échoue, utilisez Coqui TTS
-pip install TTS>=0.22.0
+**✅ Solution** : Le notebook `setup_colab.ipynb` **redémarre automatiquement le kernel** à la cellule 4. **C'est NORMAL et NÉCESSAIRE !**
 
-# Si faiss-gpu échoue, utilisez CPU
-pip install faiss-cpu==1.8.0
+**Workflow correct** :
+1. Exécutez cellule 3 (Installation)
+2. Exécutez cellule 4 → **Kernel redémarre automatiquement** ⚠️
+3. Attendez 10 secondes
+4. Exécutez cellule 5 (Vérification) → **10/10 modules OK** ✅
+5. Continuez normalement
 
-# Pour llama-cpp-python, utilisez les wheels précompilés
-pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu121
-```
+#### ❌ Problème 2 : `sentence_transformers` non importable (mais marche après)
 
-Puis modifiez `config.yaml` si nécessaire pour utiliser Coqui TTS.
+**Symptôme** : ❌ sentence_transformers dans cellule 4, mais ✅ dans cellule 6
+
+**Cause** : Installé avec ancien NumPy en cache
+
+**✅ Solution** : Idem que ci-dessus, le restart kernel à la cellule 4 corrige tout
+
+#### ❌ Problème 3 : Double dossier `agent_vocal_IA/agent_vocal_IA`
+
+**Symptôme** : Projet cloné dans `/content/agent_vocal_IA/agent_vocal_IA`
+
+**Cause** : Ancienne version du notebook
+
+**✅ Solution** : Utilisez la **dernière version** du notebook (commit 64976a0+). Il fait automatiquement `cd /content` avant clonage.
+
+#### ❌ Problème 4 : Conflits NumPy (opencv, jax, pytensor)
+
+**Symptôme** : `ERROR: pip's dependency resolver... opencv requires numpy>=2.0`
+
+**Cause** : Colab pré-installe des packages incompatibles avec NumPy <2.0
+
+**✅ Solution** : Le notebook **désinstalle automatiquement** ces packages conflictuels avant d'installer NumPy <2.0 (requis par sentence-transformers).
+
+#### ❌ Problème 5 : `piper-tts` ou `faiss-gpu` non disponible
+
+**Symptôme** : `ERROR: No matching distribution found`
+
+**Cause** : Python 3.12+ incompatible avec Piper-TTS, ou faiss-gpu pas disponible
+
+**✅ Solution** : Le notebook fait automatiquement :
+- Piper → **gTTS** (alternative compatible)
+- faiss-gpu → **faiss-cpu** (fallback)
+
+---
+
+### 🎯 Garantie : Si vous utilisez `setup_colab.ipynb` (version récente)
+
+✅ Tous ces problèmes sont **automatiquement gérés**  
+✅ Installation 100% fonctionnelle sur Python 3.12  
+✅ Aucune intervention manuelle requise  
+✅ Juste attendre le restart kernel à la cellule 4
 
 ### Le lien Gradio a expiré
 
